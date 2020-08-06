@@ -1,0 +1,33 @@
+import NotesExtract
+import tts
+import requests
+
+self.Choose_file_button.clicked.connect(self.openfile)
+self.Choose_saved_dir_button.clicked.connect(self.savefile)
+self.Convert_button.clicked.connect(self.convert)
+
+    def openfile(self):
+        openfile_name = QFileDialog.getOpenFileName(None, '选择文件', '', 'Pptx files(*.pptx)')
+        global file_dir
+        file_dir = openfile_name[0]
+        self.File_dir_blank.setText(file_dir)
+
+    def savefile(self):
+        global directory
+        directory = QtWidgets.QFileDialog.getExistingDirectory(None, "getExistingDirectory", "./")
+        self.Saved_dir_blank.setText(directory)
+
+    def convert(self):
+        if len(file_dir) == 0:
+            self.StatusLabel.setText("文件目录为空!请检查后重试!")
+            return
+        if len(save_dir) == 0:
+            self.StatusLabel.setText("保存路径为空!请检查后重试!")
+            return
+        notes = NotesExtract.ObtainPptNote(file_dir)
+        gender_opt = self.ChooseSpeakerId.currentText()
+        for i in range(0, len(notes) - 1):
+            url = tts.tts(notes[i], gender_opt)
+            f = requests.get(url)
+            with open(data['type'], "wb") as code:
+                code.write(f.content)
