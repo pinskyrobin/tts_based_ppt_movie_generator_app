@@ -13,10 +13,6 @@ save_dir = ' '
 
 _translate = QtCore.QCoreApplication.translate
 
-MainWindow.Ui_MainWindow.ChooseFileButton.clicked.connect(MainWindow.Ui_MainWindow.openfile)
-MainWindow.Ui_MainWindow.ChooseSavedDirButton.clicked.connect(MainWindow.Ui_MainWindow.savefile)
-MainWindow.Ui_MainWindow.ConvertButton.clicked.connect(MainWindow.Ui_MainWindow.convert)
-
 
 def openfile(self):
     openfile_name = QFileDialog.getOpenFileName(None, '选择文件', '', 'Pptx files(*.pptx)')
