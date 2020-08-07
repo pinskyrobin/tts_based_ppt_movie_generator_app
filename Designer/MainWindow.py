@@ -14,125 +14,119 @@ from PyQt5.QtWidgets import QFileDialog
 import NotesExtract
 import tts
 import requests
-import urllib
 
 
 class Ui_MainWindow(object):
-    file_dir = ' '
-    save_dir = ' '
-
+    _file_dir = ''
+    _save_dir = ''
+    _page = 1  # 当前幻灯片所在页数
+    _notes = []  # 备注列表
+    _pinyin = []  # 存储备注的拼音
+    _gender_opt = '100453'
     _translate = QtCore.QCoreApplication.translate
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(530, 230)
+        MainWindow.resize(550, 160)
+        MainWindow.setMinimumSize(QtCore.QSize(550, 160))
+        MainWindow.setMaximumSize(QtCore.QSize(550, 450))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.layoutWidget = QtWidgets.QWidget(self.centralwidget)
-        self.layoutWidget.setGeometry(QtCore.QRect(20, 10, 491, 211))
-        self.layoutWidget.setObjectName("layoutWidget")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.layoutWidget)
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.verticalLayout = QtWidgets.QVBoxLayout()
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.FileDirLabel = QtWidgets.QLabel(self.layoutWidget)
-        self.FileDirLabel.setObjectName("FileDirLabel")
-        self.horizontalLayout_2.addWidget(self.FileDirLabel)
-        self.FileDirBlank = QtWidgets.QTextBrowser(self.layoutWidget)
-        self.FileDirBlank.setEnabled(True)
-        self.FileDirBlank.setMaximumSize(QtCore.QSize(16777215, 25))
-        self.FileDirBlank.setObjectName("FileDirBlank")
-        self.horizontalLayout_2.addWidget(self.FileDirBlank)
-        self.ChooseFileButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.gridLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(20, 10, 520, 431))
+        self.gridLayoutWidget.setObjectName("gridLayoutWidget")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.gridLayoutWidget)
+        self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.ChooseSavedDirButton = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.ChooseSavedDirButton.setObjectName("ChooseSavedDirButton")
+        self.gridLayout_2.addWidget(self.ChooseSavedDirButton, 3, 5, 1, 1)
+        self.ChooseFileButton = QtWidgets.QPushButton(self.gridLayoutWidget)
         self.ChooseFileButton.setMinimumSize(QtCore.QSize(108, 0))
         self.ChooseFileButton.setObjectName("ChooseFileButton")
-        self.horizontalLayout_2.addWidget(self.ChooseFileButton)
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.VoiceCheck = QtWidgets.QLabel(self.layoutWidget)
-        self.VoiceCheck.setMaximumSize(QtCore.QSize(70, 16777215))
-        self.VoiceCheck.setObjectName("VoiceCheck")
-        self.horizontalLayout.addWidget(self.VoiceCheck)
-        self.GenderLabel = QtWidgets.QLabel(self.layoutWidget)
-        self.GenderLabel.setEnabled(True)
-        self.GenderLabel.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.GenderLabel.setObjectName("GenderLabel")
-        self.horizontalLayout.addWidget(self.GenderLabel)
-        self.ChooseGender = QtWidgets.QComboBox(self.layoutWidget)
-        self.ChooseGender.setMaximumSize(QtCore.QSize(80, 16777215))
-        self.ChooseGender.setObjectName("ChooseGender")
-        self.ChooseGender.addItem("")
-        self.ChooseGender.addItem("")
-        self.horizontalLayout.addWidget(self.ChooseGender)
-        self.SynthLabel = QtWidgets.QLabel(self.layoutWidget)
-        self.SynthLabel.setMinimumSize(QtCore.QSize(55, 0))
-        self.SynthLabel.setMaximumSize(QtCore.QSize(80, 16777215))
-        self.SynthLabel.setObjectName("SynthLabel")
-        self.horizontalLayout.addWidget(self.SynthLabel)
-        self.ChooseSpeakerId = QtWidgets.QComboBox(self.layoutWidget)
+        self.gridLayout_2.addWidget(self.ChooseFileButton, 0, 5, 1, 1)
+        self.line = QtWidgets.QFrame(self.gridLayoutWidget)
+        self.line.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.gridLayout_2.addWidget(self.line, 5, 0, 1, 6)
+        self.SavedDirBlank = QtWidgets.QTextBrowser(self.gridLayoutWidget)
+        self.SavedDirBlank.setMaximumSize(QtCore.QSize(16777215, 25))
+        self.SavedDirBlank.setObjectName("SavedDirBlank")
+        self.gridLayout_2.addWidget(self.SavedDirBlank, 3, 1, 1, 4)
+        self.PinyinCheck = QtWidgets.QCheckBox(self.gridLayoutWidget)
+        self.PinyinCheck.setObjectName("PinyinCheck")
+        self.gridLayout_2.addWidget(self.PinyinCheck, 4, 4, 1, 1)
+        self.StatusLabel = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.StatusLabel.setMinimumSize(QtCore.QSize(265, 0))
+        self.StatusLabel.setObjectName("StatusLabel")
+        self.gridLayout_2.addWidget(self.StatusLabel, 4, 0, 1, 4)
+        self.ChooseSpeakerId = QtWidgets.QComboBox(self.gridLayoutWidget)
         self.ChooseSpeakerId.setMinimumSize(QtCore.QSize(110, 0))
         self.ChooseSpeakerId.setMaximumSize(QtCore.QSize(110, 16777215))
         self.ChooseSpeakerId.setObjectName("ChooseSpeakerId")
         self.ChooseSpeakerId.addItem("")
         self.ChooseSpeakerId.addItem("")
-        self.horizontalLayout.addWidget(self.ChooseSpeakerId)
-        self.PreviewButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.gridLayout_2.addWidget(self.ChooseSpeakerId, 2, 4, 1, 1)
+        self.GenderLabel = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.GenderLabel.setEnabled(True)
+        self.GenderLabel.setMaximumSize(QtCore.QSize(40, 16777215))
+        self.GenderLabel.setObjectName("GenderLabel")
+        self.gridLayout_2.addWidget(self.GenderLabel, 2, 1, 1, 1)
+        self.ChooseGender = QtWidgets.QComboBox(self.gridLayoutWidget)
+        self.ChooseGender.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.ChooseGender.setObjectName("ChooseGender")
+        self.ChooseGender.addItem("")
+        self.ChooseGender.addItem("")
+        self.gridLayout_2.addWidget(self.ChooseGender, 2, 2, 1, 1)
+        self.VoiceCheck = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.VoiceCheck.setMaximumSize(QtCore.QSize(70, 16777215))
+        self.VoiceCheck.setObjectName("VoiceCheck")
+        self.gridLayout_2.addWidget(self.VoiceCheck, 2, 0, 1, 1)
+        self.FileDirBlank = QtWidgets.QTextBrowser(self.gridLayoutWidget)
+        self.FileDirBlank.setEnabled(True)
+        self.FileDirBlank.setMaximumSize(QtCore.QSize(16777215, 25))
+        self.FileDirBlank.setObjectName("FileDirBlank")
+        self.gridLayout_2.addWidget(self.FileDirBlank, 0, 1, 1, 4)
+        self.ConvertButton = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.ConvertButton.setObjectName("ConvertButton")
+        self.gridLayout_2.addWidget(self.ConvertButton, 4, 5, 1, 1)
+        self.FileDirLabel = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.FileDirLabel.setObjectName("FileDirLabel")
+        self.gridLayout_2.addWidget(self.FileDirLabel, 0, 0, 1, 1)
+        self.SynthLabel = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.SynthLabel.setMinimumSize(QtCore.QSize(55, 0))
+        self.SynthLabel.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.SynthLabel.setObjectName("SynthLabel")
+        self.gridLayout_2.addWidget(self.SynthLabel, 2, 3, 1, 1)
+        self.SavedDirLabel = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.SavedDirLabel.setObjectName("SavedDirLabel")
+        self.gridLayout_2.addWidget(self.SavedDirLabel, 3, 0, 1, 1)
+        self.PreviewButton = QtWidgets.QPushButton(self.gridLayoutWidget)
         self.PreviewButton.setMinimumSize(QtCore.QSize(108, 0))
         self.PreviewButton.setMaximumSize(QtCore.QSize(108, 16777215))
         self.PreviewButton.setObjectName("PreviewButton")
-        self.horizontalLayout.addWidget(self.PreviewButton)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.SavedDirLabel = QtWidgets.QLabel(self.layoutWidget)
-        self.SavedDirLabel.setObjectName("SavedDirLabel")
-        self.horizontalLayout_3.addWidget(self.SavedDirLabel)
-        self.SavedDirBlank = QtWidgets.QTextBrowser(self.layoutWidget)
-        self.SavedDirBlank.setMaximumSize(QtCore.QSize(16777215, 25))
-        self.SavedDirBlank.setObjectName("SavedDirBlank")
-        self.horizontalLayout_3.addWidget(self.SavedDirBlank)
-        self.ChooseSavedDirButton = QtWidgets.QPushButton(self.layoutWidget)
-        self.ChooseSavedDirButton.setObjectName("ChooseSavedDirButton")
-        self.horizontalLayout_3.addWidget(self.ChooseSavedDirButton)
-        self.verticalLayout.addLayout(self.horizontalLayout_3)
-        self.verticalLayout_2.addLayout(self.verticalLayout)
-        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.StatusLabel = QtWidgets.QLabel(self.layoutWidget)
-        self.StatusLabel.setMinimumSize(QtCore.QSize(265, 0))
-        self.StatusLabel.setObjectName("StatusLabel")
-        self.horizontalLayout_4.addWidget(self.StatusLabel)
-        self.PinyinCheck = QtWidgets.QCheckBox(self.layoutWidget)
-        self.PinyinCheck.setObjectName("PinyinCheck")
-        self.horizontalLayout_4.addWidget(self.PinyinCheck)
-        self.ConvertButton = QtWidgets.QPushButton(self.layoutWidget)
-        self.ConvertButton.setObjectName("ConvertButton")
-        self.horizontalLayout_4.addWidget(self.ConvertButton)
-        self.verticalLayout_2.addLayout(self.horizontalLayout_4)
-        self.line = QtWidgets.QFrame(self.centralwidget)
-        self.line.setGeometry(QtCore.QRect(10, 230, 511, 16))
-        self.line.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line.setObjectName("line")
-        self.CompleteButton = QtWidgets.QPushButton(self.centralwidget)
-        self.CompleteButton.setGeometry(QtCore.QRect(398, 474, 108, 32))
-        self.CompleteButton.setObjectName("CompleteButton")
-        self.widget = QtWidgets.QWidget(self.centralwidget)
-        self.widget.setGeometry(QtCore.QRect(20, 250, 491, 221))
-        self.widget.setObjectName("widget")
-        self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.widget)
-        self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.TextBrowser = QtWidgets.QTextBrowser(self.widget)
-        self.TextBrowser.setObjectName("TextBrowser")
-        self.horizontalLayout_5.addWidget(self.TextBrowser)
-        self.PinyinEdit = QtWidgets.QTextEdit(self.widget)
+        self.gridLayout_2.addWidget(self.PreviewButton, 2, 5, 1, 1)
+        self.CompleteButton_2 = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.CompleteButton_2.setObjectName("CompleteButton_2")
+        self.gridLayout_2.addWidget(self.CompleteButton_2, 7, 5, 1, 1)
+        self.PinyinEdit = QtWidgets.QPlainTextEdit(self.gridLayoutWidget)
         self.PinyinEdit.setObjectName("PinyinEdit")
-        self.horizontalLayout_5.addWidget(self.PinyinEdit)
+        self.gridLayout_2.addWidget(self.PinyinEdit, 6, 4, 1, 2)
+        self.TextBrowser = QtWidgets.QTextBrowser(self.gridLayoutWidget)
+        self.TextBrowser.setObjectName("TextBrowser")
+        self.gridLayout_2.addWidget(self.TextBrowser, 6, 0, 1, 4)
+        self.NextSlideButton = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.NextSlideButton.setEnabled(False)
+        self.NextSlideButton.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.NextSlideButton.setProperty("_page", 1)
+        self.NextSlideButton.setObjectName("NextSlideButton")
+        self.gridLayout_2.addWidget(self.NextSlideButton, 7, 4, 1, 1)
+        self.PreSlideButton = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.PreSlideButton.setEnabled(False)
+        self.PreSlideButton.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.PreSlideButton.setObjectName("PreSlideButton")
+        self.gridLayout_2.addWidget(self.PreSlideButton, 7, 3, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.actionAbout = QtWidgets.QAction(MainWindow)
         self.actionAbout.setObjectName("actionAbout")
@@ -145,57 +139,79 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        MainWindow.setTabOrder(self.ChooseFileButton, self.ChooseGender)
+        MainWindow.setTabOrder(self.ChooseGender, self.ChooseSpeakerId)
+        MainWindow.setTabOrder(self.ChooseSpeakerId, self.PreviewButton)
+        MainWindow.setTabOrder(self.PreviewButton, self.ChooseSavedDirButton)
+        MainWindow.setTabOrder(self.ChooseSavedDirButton, self.PinyinCheck)
+        MainWindow.setTabOrder(self.PinyinCheck, self.ConvertButton)
+        MainWindow.setTabOrder(self.ConvertButton, self.PinyinEdit)
+        MainWindow.setTabOrder(self.PinyinEdit, self.PreSlideButton)
+        MainWindow.setTabOrder(self.PreSlideButton, self.NextSlideButton)
+        MainWindow.setTabOrder(self.NextSlideButton, self.CompleteButton_2)
+        MainWindow.setTabOrder(self.CompleteButton_2, self.FileDirBlank)
+        MainWindow.setTabOrder(self.FileDirBlank, self.SavedDirBlank)
+        MainWindow.setTabOrder(self.SavedDirBlank, self.TextBrowser)
+
+        self.CompleteButton_2.setEnabled(False)
         self.ChooseFileButton.clicked.connect(self.openfile)
         self.ChooseSavedDirButton.clicked.connect(self.savefile)
-        self.ConvertButton.clicked.connect(self.convert)
+        self.ConvertButton.clicked.connect(lambda: self.convert(MainWindow))
+        self.PreSlideButton.clicked.connect(lambda: self._display(True))
+        self.NextSlideButton.clicked.connect(lambda: self._display())
+        self.CompleteButton_2.clicked.connect(self.checked_download)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(self._translate("MainWindow", "MainWindow"))
-        self.FileDirLabel.setText(self._translate("MainWindow", "文件路径："))
-        self.FileDirBlank.setHtml(self._translate("MainWindow",
-                                                  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                                  "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                                  "p, li { white-space: pre-wrap; }\n"
-                                                  "</style></head><body style=\" font-family:\'.SF NS Text\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
-                                                  "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
-        self.ChooseFileButton.setText(self._translate("MainWindow", "选择文件"))
-        self.VoiceCheck.setText(self._translate("MainWindow", "语音设定："))
-        self.GenderLabel.setText(self._translate("MainWindow", "性别"))
-        self.ChooseGender.setItemText(0, self._translate("MainWindow", "男声"))
-        self.ChooseGender.setItemText(1, self._translate("MainWindow", "女声"))
-        self.SynthLabel.setText(self._translate("MainWindow", "语调设定"))
-        self.ChooseSpeakerId.setItemText(0, self._translate("MainWindow", "100453"))
-        self.ChooseSpeakerId.setItemText(1, self._translate("MainWindow", "100458"))
-        self.PreviewButton.setText(self._translate("MainWindow", "试听"))
-        self.SavedDirLabel.setText(self._translate("MainWindow", "保存路径："))
-        self.SavedDirBlank.setHtml(self._translate("MainWindow",
-                                                   "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                                   "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                                   "p, li { white-space: pre-wrap; }\n"
-                                                   "</style></head><body style=\" font-family:\'.SF NS Text\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
-                                                   "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
-        self.ChooseSavedDirButton.setText(self._translate("MainWindow", "选择文件夹"))
-        self.StatusLabel.setText(self._translate("MainWindow",
-                                                 "<html><head/><body><p><span style=\" font-size:14pt; color:#21ff06;\">一切就绪！</span></p></body></html>"))
-        self.PinyinCheck.setText(self._translate("MainWindow", "启用拼音检查"))
-        self.ConvertButton.setText(self._translate("MainWindow", "开始转换"))
-        self.CompleteButton.setText(self._translate("MainWindow", "修改完成"))
-        self.actionAbout.setText(self._translate("MainWindow", "About"))
-        self.actionOption.setText(self._translate("MainWindow", "Option"))
-        self.actionQuit.setText(self._translate("MainWindow", "Quit"))
-        self.actionPreference.setText(self._translate("MainWindow", "Preference"))
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.ChooseSavedDirButton.setText(_translate("MainWindow", "选择文件夹"))
+        self.ChooseFileButton.setText(_translate("MainWindow", "选择文件"))
+        self.SavedDirBlank.setHtml(_translate("MainWindow",
+                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+                                              "p, li { white-space: pre-wrap; }\n"
+                                              "</style></head><body style=\" font-family:\'.SF NS Text\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
+                                              "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+        self.PinyinCheck.setText(_translate("MainWindow", "启用拼音检查"))
+        self.StatusLabel.setText(_translate("MainWindow",
+                                            "<html><head/><body><p><span style=\" font-size:14pt; color:#21ff06;\">一切就绪！</span></p></body></html>"))
+        self.ChooseSpeakerId.setItemText(0, _translate("MainWindow", "100453"))
+        self.ChooseSpeakerId.setItemText(1, _translate("MainWindow", "100458"))
+        self.GenderLabel.setText(_translate("MainWindow", "性别"))
+        self.ChooseGender.setItemText(0, _translate("MainWindow", "男声"))
+        self.ChooseGender.setItemText(1, _translate("MainWindow", "女声"))
+        self.VoiceCheck.setText(_translate("MainWindow", "语音设定："))
+        self.FileDirBlank.setHtml(_translate("MainWindow",
+                                             "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+                                             "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+                                             "p, li { white-space: pre-wrap; }\n"
+                                             "</style></head><body style=\" font-family:\'.SF NS Text\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
+                                             "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+        self.ConvertButton.setText(_translate("MainWindow", "开始转换"))
+        self.FileDirLabel.setText(_translate("MainWindow", "文件路径："))
+        self.SynthLabel.setText(_translate("MainWindow", "语调设定"))
+        self.SavedDirLabel.setText(_translate("MainWindow", "保存路径："))
+        self.PreviewButton.setText(_translate("MainWindow", "试听"))
+        self.CompleteButton_2.setText(_translate("MainWindow", "修改完成"))
+        self.NextSlideButton.setText(_translate("MainWindow", "下一页"))
+        self.PreSlideButton.setText(_translate("MainWindow", "上一页"))
+        self.actionAbout.setText(_translate("MainWindow", "About"))
+        self.actionOption.setText(_translate("MainWindow", "Option"))
+        self.actionQuit.setText(_translate("MainWindow", "Quit"))
+        self.actionPreference.setText(_translate("MainWindow", "Preference"))
 
     def openfile(self):
         openfile_name = QFileDialog.getOpenFileName(None, '选择文件', '', 'Pptx files(*.pptx)')
-        self.file_dir = openfile_name[0]
-        self.FileDirBlank.setText(self.file_dir)
+        self._file_dir = openfile_name[0]
+        self.FileDirBlank.setText(self._file_dir)
+        notes = NotesExtract.ObtainPptNote(self._file_dir)
 
     def savefile(self):
-        self.save_dir = QtWidgets.QFileDialog.getExistingDirectory(None, "getExistingDirectory", "./")
-        self.SavedDirBlank.setText(self.save_dir)
+        self._save_dir = QtWidgets.QFileDialog.getExistingDirectory(None, "getExistingDirectory", "./")
+        self.SavedDirBlank.setText(self._save_dir)
 
     def convert(self, MainWindow):
-        if self.file_dir == ' ':
+        if self._file_dir == '':
             # self.StatusLabel.setText("文件目录为空!请检查后重试!")
             self.StatusLabel.setText(self._translate("MainWindow",
                                                      "<html><head/><body><p><span style=\" "
@@ -203,7 +219,7 @@ class Ui_MainWindow(object):
                                                      ">文件目录为空!请检查后重试!"
                                                      "</span></p></body></html>"))
             return
-        if self.save_dir == ' ':
+        if self._save_dir == '':
             # self.StatusLabel.setText("保存路径为空!请检查后重试!")
             self.StatusLabel.setText(self._translate("MainWindow",
                                                      "<html><head/><body><p><span style=\" "
@@ -211,33 +227,92 @@ class Ui_MainWindow(object):
                                                      ">保存路径为空!请检查后重试!"
                                                      "</span></p></body></html>"))
             return
+        self._gender_opt = self.ChooseSpeakerId.currentText()
+        self._notes = NotesExtract.ObtainPptNote(self._file_dir)
         if self.PinyinCheck.isChecked():
-            MainWindow.resize(530, 510)
-        self._download_()
+            if len(self._notes) != 1:
+                self.NextSlideButton.setEnabled(True)
+            MainWindow.resize(550, 450)
+            self._preview()
+        else:
+            self._download()
 
-    def _download_(self):
-        notes = NotesExtract.ObtainPptNote(self.file_dir)
-        gender_opt = self.ChooseSpeakerId.currentText()
-        if self.PinyinCheck.isChecked():
-            self.StatusLabel.setText(self._translate("MainWindow",
-                                                     "<html><head/><body><p><span style=\" "
-                                                     "font-size:14pt; color:#0000cd;\""
-                                                     ">正在获取备注及拼音..."
-                                                     "</span></p></body></html>"))
-            for i in range(0, len(notes)):
-                if notes[i] == '\n':
-                    continue
-                else:
-                    slide = tts.tts(notes[i], gender_opt)
-                    self.TextBrowser.append(slide[0])
-                    self.PinyinEdit.append(slide[1])
-            self.StatusLabel.setText(self._translate("MainWindow",
-                                                     "<html><head/><body><p><span style=\""
-                                                     " font-size:14pt; color:#21ff06;\""
-                                                     ">备注及拼音获取完成!请核对修改拼音!</span></p></body></html>"))
-            return
-        for i in range(0, len(notes)):
-            if notes[i] == '\n':
+    # 将编辑单页幻灯片备注中的文字及拼音
+    def _display(self, re=False):
+        # 先将翻页前的拼音字段保存
+        if self._page == len(self._pinyin) + 1 and self._notes[self._page - 1] != '\n':
+            self._pinyin.append(self.PinyinEdit.toPlainText())
+        elif self._page == len(self._pinyin) + 1:
+            self._pinyin.append('\n')
+        elif self._notes[self._page - 1] != '\n':
+            self._pinyin[self._page - 1] = self.PinyinEdit.toPlainText()
+
+        # 判断当前页数
+        if re:
+            self._page = self._page - 1
+        else:
+            self._page = self._page + 1
+        self.StatusLabel.setText(self._translate("MainWindow",
+                                                 "<html><head/><body><p><span style=\" "
+                                                 "font-size:14pt; color:#0000cd;\""
+                                                 ">请处理第" + str(self._page) + "页幻灯片!"
+                                                                             "</span></p></body></html>"))
+
+        # 获取并输出当前页的备注及拼音
+        self.TextBrowser.clear()
+        self.PinyinEdit.clear()
+        if self._page == len(self._pinyin) + 1:
+            slide = tts.tts(self._notes[self._page - 1], "100453", True, True)
+            if slide is None:
+                self.TextBrowser.append("此页无备注!")
+                self.PinyinEdit.appendPlainText(" ")
+            else:
+                self.TextBrowser.append(slide[0])
+                self.PinyinEdit.appendPlainText(slide[1])
+        else:
+            self.TextBrowser.append(self._notes[self._page - 1])
+            self.PinyinEdit.appendPlainText(self._pinyin[self._page - 1])
+
+        # 根据读取的页数位置设置[上一页]和[下一页]按钮
+        if self._page == 1 and len(self._notes) != 1:
+            self.PreSlideButton.setEnabled(False)
+            self.NextSlideButton.setEnabled(True)
+        elif self._page == len(self._notes) and len(self._notes) != 1:
+            self.PreSlideButton.setEnabled(True)
+            self.NextSlideButton.setEnabled(False)
+        elif 1 < self._page < len(self._notes):
+            self.PreSlideButton.setEnabled(True)
+            self.NextSlideButton.setEnabled(True)
+
+        if self._page == len(self._notes):
+            self.CompleteButton_2.setEnabled(True)
+
+    # 拼音预览函数
+    def _preview(self):
+        self.StatusLabel.setText(self._translate("MainWindow",
+                                                 "<html><head/><body><p><span style=\" "
+                                                 "font-size:14pt; color:#0000cd;\""
+                                                 ">请处理第1页幻灯片!"
+                                                 "</span></p></body></html>"))
+        # self._pinyin.append(self._notes[0])
+        if self._notes[0] != '\n':
+            slide = tts.tts(self._notes[0], "100453", True, True)
+            self.TextBrowser.setText(slide[0])
+            self.PinyinEdit.setPlainText(slide[1])
+        else:
+            self.TextBrowser.setText("此页无备注!")
+
+    def checked_download(self):
+        if self._page == len(self._pinyin) + 1 and self._notes[self._page - 1] != '\n':
+            self._pinyin.append(self.PinyinEdit.toPlainText())
+        elif self._page == len(self._pinyin) + 1:
+            self._pinyin.append('\n')
+        print(self._pinyin)
+        self._download(False)
+
+    def _download(self, is_text=True):
+        for i in range(0, len(self._notes)):
+            if self._notes[i] == '\n':
                 continue
             self.StatusLabel.setText(self._translate("MainWindow",
                                                      "<html><head/><body><p><span style=\" "
@@ -245,7 +320,11 @@ class Ui_MainWindow(object):
                                                      ">正在处理第" + str(i + 1) + "页幻灯片..."
                                                                              "</span></p></body></html>"))
 
-            url = tts.tts(notes[i], gender_opt)
+            if is_text:
+                chara = self._notes[i]
+            else:
+                chara = self._pinyin[i]
+            url = tts.tts(chara, self._gender_opt, is_text)
             if url is None:
                 self.StatusLabel.setText(self._translate("MainWindow",
                                                          "<html><head/><body><p><span style=\" "

@@ -32,6 +32,7 @@ def tts(text, speaker_id, is_text=True, is_preview=False):
         parameter['text'] = text
     else:
         parameter['pinyin'] = text
+        parameter['mode'] = '#synth_pinyin'
     parameter['speaker_id'] = speaker_id
     # 如果文本较长，timeout要设定大一点
     response = requests.post(url, data=json.dumps(parameter), timeout=500)

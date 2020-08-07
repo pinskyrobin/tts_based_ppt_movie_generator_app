@@ -26,4 +26,4 @@ def ObtainPptNote(ppt_path):
 if __name__ == '__main__':
     print("请输入ppt所在的文件目录：")
     ppt_path = input()  # 获取pptx文件的存储路径
-    ObtainPptNote(ppt_path)  # 获取备注
+    print(ObtainPptNote(ppt_path))  # 获取备注
