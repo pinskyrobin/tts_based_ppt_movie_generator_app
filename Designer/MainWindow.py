@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QDesktopWidget
 
 import NotesExtract
 import tts
@@ -17,19 +17,26 @@ import requests
 
 
 class Ui_MainWindow(object):
-    _file_dir = ''
-    _save_dir = ''
+    _file_dir = ''  # pptx文件路径
+    _save_dir = ''  # 视频保存路径
     _page = 1  # 当前幻灯片所在页数
     _notes = []  # 备注列表
     _pinyin = []  # 存储备注的拼音
-    _gender_opt = '100453'
+    _gender_opt = '100453'  # 默认主播ID
     _translate = QtCore.QCoreApplication.translate
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(550, 160)
+        MainWindow.setEnabled(True)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
+        MainWindow.setSizePolicy(sizePolicy)
         MainWindow.setMinimumSize(QtCore.QSize(550, 160))
         MainWindow.setMaximumSize(QtCore.QSize(550, 450))
+        MainWindow.setFixedSize(550, 160)
+        MainWindow.setMouseTracking(True)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayoutWidget = QtWidgets.QWidget(self.centralwidget)
@@ -39,6 +46,12 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.ChooseSavedDirButton = QtWidgets.QPushButton(self.gridLayoutWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.ChooseSavedDirButton.sizePolicy().hasHeightForWidth())
+        self.ChooseSavedDirButton.setSizePolicy(sizePolicy)
+        self.ChooseSavedDirButton.setMouseTracking(False)
         self.ChooseSavedDirButton.setObjectName("ChooseSavedDirButton")
         self.gridLayout_2.addWidget(self.ChooseSavedDirButton, 3, 5, 1, 1)
         self.ChooseFileButton = QtWidgets.QPushButton(self.gridLayoutWidget)
@@ -107,26 +120,27 @@ class Ui_MainWindow(object):
         self.PreviewButton.setMaximumSize(QtCore.QSize(108, 16777215))
         self.PreviewButton.setObjectName("PreviewButton")
         self.gridLayout_2.addWidget(self.PreviewButton, 2, 5, 1, 1)
-        self.CompleteButton_2 = QtWidgets.QPushButton(self.gridLayoutWidget)
-        self.CompleteButton_2.setObjectName("CompleteButton_2")
-        self.gridLayout_2.addWidget(self.CompleteButton_2, 7, 5, 1, 1)
+        self.CompleteButton = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.CompleteButton.setEnabled(False)
+        self.CompleteButton.setObjectName("CompleteButton")
+        self.gridLayout_2.addWidget(self.CompleteButton, 7, 5, 1, 1)
         self.PinyinEdit = QtWidgets.QPlainTextEdit(self.gridLayoutWidget)
         self.PinyinEdit.setObjectName("PinyinEdit")
         self.gridLayout_2.addWidget(self.PinyinEdit, 6, 4, 1, 2)
         self.TextBrowser = QtWidgets.QTextBrowser(self.gridLayoutWidget)
         self.TextBrowser.setObjectName("TextBrowser")
         self.gridLayout_2.addWidget(self.TextBrowser, 6, 0, 1, 4)
+        self.PreSlideButton = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.PreSlideButton.setEnabled(False)
+        self.PreSlideButton.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.PreSlideButton.setObjectName("PreSlideButton")
+        self.gridLayout_2.addWidget(self.PreSlideButton, 7, 2, 1, 1)
         self.NextSlideButton = QtWidgets.QPushButton(self.gridLayoutWidget)
         self.NextSlideButton.setEnabled(False)
         self.NextSlideButton.setMaximumSize(QtCore.QSize(80, 16777215))
         self.NextSlideButton.setProperty("_page", 1)
         self.NextSlideButton.setObjectName("NextSlideButton")
-        self.gridLayout_2.addWidget(self.NextSlideButton, 7, 4, 1, 1)
-        self.PreSlideButton = QtWidgets.QPushButton(self.gridLayoutWidget)
-        self.PreSlideButton.setEnabled(False)
-        self.PreSlideButton.setMaximumSize(QtCore.QSize(80, 16777215))
-        self.PreSlideButton.setObjectName("PreSlideButton")
-        self.gridLayout_2.addWidget(self.PreSlideButton, 7, 3, 1, 1)
+        self.gridLayout_2.addWidget(self.NextSlideButton, 7, 3, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.actionAbout = QtWidgets.QAction(MainWindow)
         self.actionAbout.setObjectName("actionAbout")
@@ -146,20 +160,17 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.ChooseSavedDirButton, self.PinyinCheck)
         MainWindow.setTabOrder(self.PinyinCheck, self.ConvertButton)
         MainWindow.setTabOrder(self.ConvertButton, self.PinyinEdit)
-        MainWindow.setTabOrder(self.PinyinEdit, self.PreSlideButton)
-        MainWindow.setTabOrder(self.PreSlideButton, self.NextSlideButton)
-        MainWindow.setTabOrder(self.NextSlideButton, self.CompleteButton_2)
-        MainWindow.setTabOrder(self.CompleteButton_2, self.FileDirBlank)
+        MainWindow.setTabOrder(self.PinyinEdit, self.CompleteButton)
+        MainWindow.setTabOrder(self.CompleteButton, self.FileDirBlank)
         MainWindow.setTabOrder(self.FileDirBlank, self.SavedDirBlank)
         MainWindow.setTabOrder(self.SavedDirBlank, self.TextBrowser)
 
-        self.CompleteButton_2.setEnabled(False)
         self.ChooseFileButton.clicked.connect(self.openfile)
         self.ChooseSavedDirButton.clicked.connect(self.savefile)
         self.ConvertButton.clicked.connect(lambda: self.convert(MainWindow))
         self.PreSlideButton.clicked.connect(lambda: self._display(True))
         self.NextSlideButton.clicked.connect(lambda: self._display())
-        self.CompleteButton_2.clicked.connect(self.checked_download)
+        self.CompleteButton.clicked.connect(self.checked_download)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -192,9 +203,9 @@ class Ui_MainWindow(object):
         self.SynthLabel.setText(_translate("MainWindow", "语调设定"))
         self.SavedDirLabel.setText(_translate("MainWindow", "保存路径："))
         self.PreviewButton.setText(_translate("MainWindow", "试听"))
-        self.CompleteButton_2.setText(_translate("MainWindow", "修改完成"))
-        self.NextSlideButton.setText(_translate("MainWindow", "下一页"))
+        self.CompleteButton.setText(_translate("MainWindow", "修改完成"))
         self.PreSlideButton.setText(_translate("MainWindow", "上一页"))
+        self.NextSlideButton.setText(_translate("MainWindow", "下一页"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
         self.actionOption.setText(_translate("MainWindow", "Option"))
         self.actionQuit.setText(_translate("MainWindow", "Quit"))
@@ -210,6 +221,7 @@ class Ui_MainWindow(object):
         self._save_dir = QtWidgets.QFileDialog.getExistingDirectory(None, "getExistingDirectory", "./")
         self.SavedDirBlank.setText(self._save_dir)
 
+    # 音频转换函数
     def convert(self, MainWindow):
         if self._file_dir == '':
             # self.StatusLabel.setText("文件目录为空!请检查后重试!")
@@ -227,12 +239,19 @@ class Ui_MainWindow(object):
                                                      ">保存路径为空!请检查后重试!"
                                                      "</span></p></body></html>"))
             return
+        # 获取主播ID及备注内容
         self._gender_opt = self.ChooseSpeakerId.currentText()
         self._notes = NotesExtract.ObtainPptNote(self._file_dir)
+        #  判断用户是否启用"拼音检查"
         if self.PinyinCheck.isChecked():
             if len(self._notes) != 1:
                 self.NextSlideButton.setEnabled(True)
-            MainWindow.resize(550, 450)
+            # 调整窗口尺寸并居中显示
+            MainWindow.setFixedSize(550, 450)
+            screen = QDesktopWidget().screenGeometry()
+            size = MainWindow.geometry()
+            MainWindow.move((screen.width() - size.width()) / 2,
+                            (screen.height() - size.height()) / 2)
             self._preview()
         else:
             self._download()
@@ -259,8 +278,11 @@ class Ui_MainWindow(object):
                                                                              "</span></p></body></html>"))
 
         # 获取并输出当前页的备注及拼音
+        # 清空当前文本框中的内容
         self.TextBrowser.clear()
         self.PinyinEdit.clear()
+
+        # 判断是否需要更新拼音数组
         if self._page == len(self._pinyin) + 1:
             slide = tts.tts(self._notes[self._page - 1], "100453", True, True)
             if slide is None:
@@ -284,8 +306,9 @@ class Ui_MainWindow(object):
             self.PreSlideButton.setEnabled(True)
             self.NextSlideButton.setEnabled(True)
 
+        # 全部页数的幻灯片都处理完后将[修改完成]按键设置为可以点击
         if self._page == len(self._notes):
-            self.CompleteButton_2.setEnabled(True)
+            self.CompleteButton.setEnabled(True)
 
     # 拼音预览函数
     def _preview(self):
@@ -294,7 +317,7 @@ class Ui_MainWindow(object):
                                                  "font-size:14pt; color:#0000cd;\""
                                                  ">请处理第1页幻灯片!"
                                                  "</span></p></body></html>"))
-        # self._pinyin.append(self._notes[0])
+        # 进行第一页幻灯片处理
         if self._notes[0] != '\n':
             slide = tts.tts(self._notes[0], "100453", True, True)
             self.TextBrowser.setText(slide[0])
@@ -302,16 +325,20 @@ class Ui_MainWindow(object):
         else:
             self.TextBrowser.setText("此页无备注!")
 
+    # 检查拼音后的下载方式
     def checked_download(self):
+        # 如果最后一页的拼音数据没有保存,保存之
         if self._page == len(self._pinyin) + 1 and self._notes[self._page - 1] != '\n':
             self._pinyin.append(self.PinyinEdit.toPlainText())
         elif self._page == len(self._pinyin) + 1:
             self._pinyin.append('\n')
-        print(self._pinyin)
+        # 拼音模式的语音合成
         self._download(False)
 
+    # 通过接口下载音频
     def _download(self, is_text=True):
         for i in range(0, len(self._notes)):
+            # 跳过空白备注
             if self._notes[i] == '\n':
                 continue
             self.StatusLabel.setText(self._translate("MainWindow",
@@ -320,17 +347,23 @@ class Ui_MainWindow(object):
                                                      ">正在处理第" + str(i + 1) + "页幻灯片..."
                                                                              "</span></p></body></html>"))
 
+            # 判断合成模式
             if is_text:
                 chara = self._notes[i]
             else:
                 chara = self._pinyin[i]
             url = tts.tts(chara, self._gender_opt, is_text)
+
+            # 简易错误处理
+            # TODO: 优化错误处理代码--转换为异常处理
             if url is None:
                 self.StatusLabel.setText(self._translate("MainWindow",
                                                          "<html><head/><body><p><span style=\" "
                                                          "font-size:14pt; color:#ff0000;\""
                                                          ">转换出错!请重试!</span></p></body></html>"))
                 return
+
+            # 从网页下载音频
             f = requests.get(url)
             with open(str(i + 1) + ".wav", "wb") as code:
                 code.write(f.content)

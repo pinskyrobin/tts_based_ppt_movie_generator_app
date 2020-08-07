@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -9,6 +12,12 @@
     <width>550</width>
     <height>160</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
@@ -21,6 +30,9 @@
     <width>550</width>
     <height>450</height>
    </size>
+  </property>
+  <property name="mouseTracking">
+   <bool>true</bool>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -38,6 +50,15 @@
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="3" column="5">
       <widget class="QPushButton" name="ChooseSavedDirButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="mouseTracking">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>选择文件夹</string>
        </property>
@@ -255,7 +276,10 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item row="7" column="5">
-      <widget class="QPushButton" name="CompleteButton_2">
+      <widget class="QPushButton" name="CompleteButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>修改完成</string>
        </property>
@@ -267,7 +291,23 @@ p, li { white-space: pre-wrap; }
      <item row="6" column="0" colspan="4">
       <widget class="QTextBrowser" name="TextBrowser"/>
      </item>
-     <item row="7" column="4">
+     <item row="7" column="2">
+      <widget class="QPushButton" name="PreSlideButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>上一页</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="3">
       <widget class="QPushButton" name="NextSlideButton">
        <property name="enabled">
         <bool>false</bool>
@@ -283,22 +323,6 @@ p, li { white-space: pre-wrap; }
        </property>
        <property name="_page" stdset="0">
         <number>1</number>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="3">
-      <widget class="QPushButton" name="PreSlideButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>80</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>上一页</string>
        </property>
       </widget>
      </item>
@@ -335,9 +359,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>PinyinCheck</tabstop>
   <tabstop>ConvertButton</tabstop>
   <tabstop>PinyinEdit</tabstop>
-  <tabstop>PreSlideButton</tabstop>
-  <tabstop>NextSlideButton</tabstop>
-  <tabstop>CompleteButton_2</tabstop>
+  <tabstop>CompleteButton</tabstop>
   <tabstop>FileDirBlank</tabstop>
   <tabstop>SavedDirBlank</tabstop>
   <tabstop>TextBrowser</tabstop>

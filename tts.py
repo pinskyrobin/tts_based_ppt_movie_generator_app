@@ -43,13 +43,8 @@ def tts(text, speaker_id, is_text=True, is_preview=False):
         pinyin = data['pinyin']  # 文本转换的拼音
         if is_preview:
             return [text, pinyin]
-        # info = data['info']
         src_0 = data['src_0']
         wav_url = 'http://111.230.90.48:8080/' + src_0  # 合成的音频文件地址
-        # print(text)
-        # print(pinyin)
-        # print(info)
-        # print(wav_url)
         return wav_url
 
     # 多音字问题 临时解决方案：

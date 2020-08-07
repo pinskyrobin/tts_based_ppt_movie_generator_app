@@ -4,19 +4,22 @@ import NotesExtract
 import tts
 import requests
 
-    _file_dir = ''
-    _save_dir = ''
+    _file_dir = ''  # pptx文件路径
+    _save_dir = ''  # 视频保存路径
     _page = 1  # 当前幻灯片所在页数
     _notes = []  # 备注列表
     _pinyin = []  # 存储备注的拼音
+    _gender_opt = '100453'  # 默认主播ID
     _translate = QtCore.QCoreApplication.translate
 
+        MainWindow.setFixedSize(550, 160)
 
         self.ChooseFileButton.clicked.connect(self.openfile)
         self.ChooseSavedDirButton.clicked.connect(self.savefile)
         self.ConvertButton.clicked.connect(lambda: self.convert(MainWindow))
         self.PreSlideButton.clicked.connect(lambda: self._display(True))
         self.NextSlideButton.clicked.connect(lambda: self._display())
+        self.CompleteButton_2.clicked.connect(self.checked_download)
 
     def openfile(self):
         openfile_name = QFileDialog.getOpenFileName(None, '选择文件', '', 'Pptx files(*.pptx)')
@@ -28,6 +31,7 @@ import requests
         self._save_dir = QtWidgets.QFileDialog.getExistingDirectory(None, "getExistingDirectory", "./")
         self.SavedDirBlank.setText(self._save_dir)
 
+    # 音频转换函数
     def convert(self, MainWindow):
         if self._file_dir == '':
             # self.StatusLabel.setText("文件目录为空!请检查后重试!")
@@ -45,19 +49,22 @@ import requests
                                                      ">保存路径为空!请检查后重试!"
                                                      "</span></p></body></html>"))
             return
-        gender_opt = self.ChooseSpeakerId.currentText()
+        # 获取主播ID及备注内容
+        self._gender_opt = self.ChooseSpeakerId.currentText()
+        self._notes = NotesExtract.ObtainPptNote(self._file_dir)
+        #  判断用户是否启用"拼音检查"
         if self.PinyinCheck.isChecked():
-            self.PreSlideButton.setEnabled(False)
-            self._notes = NotesExtract.ObtainPptNote(self._file_dir)
-            if len(self._notes) == 1:
-                self.NextSlideButton.setEnabled(False)
-            else:
+            if len(self._notes) != 1:
                 self.NextSlideButton.setEnabled(True)
-            MainWindow.resize(550, 450)
+            # 调整窗口尺寸并居中显示
+            MainWindow.setFixedSize(550, 450)
+            screen = QDesktopWidget().screenGeometry()
+            size = MainWindow.geometry()
+            MainWindow.move((screen.width() - size.width()) / 2,
+                            (screen.height() - size.height()) / 2)
             self._preview()
-            # self._checked_download(pinyin, gender_opt)
         else:
-            self._download(gender_opt)
+            self._download()
 
     # 将编辑单页幻灯片备注中的文字及拼音
     def _display(self, re=False):
@@ -81,13 +88,22 @@ import requests
                                                                              "</span></p></body></html>"))
 
         # 获取并输出当前页的备注及拼音
-        slide = tts.tts(self._notes[self._page], "100453", True, True)
-        if slide is None:
-            self.TextBrowser.setText("此页无备注!")
-            self.PinyinEdit.setText(" ")
+        # 清空当前文本框中的内容
+        self.TextBrowser.clear()
+        self.PinyinEdit.clear()
+
+        # 判断是否需要更新拼音数组
+        if self._page == len(self._pinyin) + 1:
+            slide = tts.tts(self._notes[self._page - 1], "100453", True, True)
+            if slide is None:
+                self.TextBrowser.append("此页无备注!")
+                self.PinyinEdit.appendPlainText(" ")
+            else:
+                self.TextBrowser.append(slide[0])
+                self.PinyinEdit.appendPlainText(slide[1])
         else:
-            self.TextBrowser.setText(slide[0])
-            self.PinyinEdit.setText(slide[1])
+            self.TextBrowser.append(self._notes[self._page - 1])
+            self.PinyinEdit.appendPlainText(self._pinyin[self._page - 1])
 
         # 根据读取的页数位置设置[上一页]和[下一页]按钮
         if self._page == 1 and len(self._notes) != 1:
@@ -100,9 +116,9 @@ import requests
             self.PreSlideButton.setEnabled(True)
             self.NextSlideButton.setEnabled(True)
 
-        print(self._page)
-        print(self._notes)
-        print(self._pinyin)
+        # 全部页数的幻灯片都处理完后将[修改完成]按键设置为可以点击
+        if self._page == len(self._notes):
+            self.CompleteButton_2.setEnabled(True)
 
     # 拼音预览函数
     def _preview(self):
@@ -111,18 +127,28 @@ import requests
                                                  "font-size:14pt; color:#0000cd;\""
                                                  ">请处理第1页幻灯片!"
                                                  "</span></p></body></html>"))
-        # self._pinyin.append(self._notes[0])
+        # 进行第一页幻灯片处理
         if self._notes[0] != '\n':
             slide = tts.tts(self._notes[0], "100453", True, True)
             self.TextBrowser.setText(slide[0])
-            self.PinyinEdit.setText(slide[1])
+            self.PinyinEdit.setPlainText(slide[1])
         else:
             self.TextBrowser.setText("此页无备注!")
 
-    # def _checked_download(self, pinyin, gender_opt):
+    # 检查拼音后的下载方式
+    def checked_download(self):
+        # 如果最后一页的拼音数据没有保存,保存之
+        if self._page == len(self._pinyin) + 1 and self._notes[self._page - 1] != '\n':
+            self._pinyin.append(self.PinyinEdit.toPlainText())
+        elif self._page == len(self._pinyin) + 1:
+            self._pinyin.append('\n')
+        # 拼音模式的语音合成
+        self._download(False)
 
-    def _download(self, gender_opt):
+    # 通过接口下载音频
+    def _download(self, is_text=True):
         for i in range(0, len(self._notes)):
+            # 跳过空白备注
             if self._notes[i] == '\n':
                 continue
             self.StatusLabel.setText(self._translate("MainWindow",
@@ -131,13 +157,23 @@ import requests
                                                      ">正在处理第" + str(i + 1) + "页幻灯片..."
                                                                              "</span></p></body></html>"))
 
-            url = tts.tts(self._notes[i], gender_opt)
+            # 判断合成模式
+            if is_text:
+                chara = self._notes[i]
+            else:
+                chara = self._pinyin[i]
+            url = tts.tts(chara, self._gender_opt, is_text)
+
+            # 简易错误处理
+            # TODO: 优化错误处理代码--转换为异常处理
             if url is None:
                 self.StatusLabel.setText(self._translate("MainWindow",
                                                          "<html><head/><body><p><span style=\" "
                                                          "font-size:14pt; color:#ff0000;\""
                                                          ">转换出错!请重试!</span></p></body></html>"))
                 return
+
+            # 从网页下载音频
             f = requests.get(url)
             with open(str(i + 1) + ".wav", "wb") as code:
                 code.write(f.content)
