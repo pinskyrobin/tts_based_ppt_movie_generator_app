@@ -43,6 +43,26 @@ if __name__ == '__main__':
         x = 0
         time = []  # 获取各页备注的语音时间并存在列表中
 
+        # 主播性别：男或女
+        gender = input("请选择主播性别：")
+        while gender != "男" or gender != "女":
+            gender = input("输入错误，请重新选择主播性别：")
+
+        # 主播id存放在字典中，键和值均为字符串型，分男主播、女主播两个字典
+        man = {"磁性男声": "107289", "时尚男声": "100453",
+               "浑厚男声": "106528", "成熟男声": "107813", "亲切男声": "blz"}
+        woman = {"亲切女声": "101238", "时尚女声": "100438", "甜美女声": "108259-shaoyv",
+                 "温柔女声": "100216", "活泼女声": "biaobei", "可爱女童": "108259-luoli"}
+        name = input("请选择主播：")
+        if gender == "男":
+            gendernum = '1'
+            while name not in man:
+                name = input("该男主播不存在，请重新选择男主播：")
+        if gender == "女":
+            gendernum = '0'
+            while name not in woman:
+                name = input("该女主播不存在，请重新选择女主播：")
+
         # 是否启用拼音检查
         # check = False
 
@@ -50,9 +70,10 @@ if __name__ == '__main__':
             flag = False  # 标记这一页ppt是否有有效备注
             if len(note[i]) > 0:  # 有备注的话（可能有效可能无效）
                 try:
-                    url = Code.tts.Synthesis(note[i])  # 获取url
+                    url = Code.tts.Synthesis(note[i], speaker[name], gendernum)  # 获取url
                 except Exception:
                     print("语音合成系统不能正常访问！")
+                    rmtree(wav_dir)
                     sys.exit()
                 if url is not None:  # 避免无效备注的影响（无效备注无法生成语音）
                     urllib.request.urlretrieve(url, wav_dir + r"\%s.wav" % x)   # 通过url下载音频并保存（绝对路径或相对路径都行）
@@ -65,42 +86,45 @@ if __name__ == '__main__':
                 duration = 1  # demo
                 while duration < 0:
                     print("时长必须为正数！")
-                    print("请为空白备注页%d选择空白音频时长：" % (i + 1))
+                    print("请重新为空白备注页%d选择空白音频时长：" % (i + 1))
                     duration = int(input())
                 time.append(duration)
                 res_1 = Code.BlankGeneration.blank(duration, wav_dir + r"\%s.wav" % x)  # 空白音频生成
                 if not res_1:
                     print("空白音频生成失败！")
+                    rmtree(wav_dir)
                     sys.exit()
             x += 1
         # 语音合并
-        Code.Wavmerge.merge(wav_dir, wav_dir + r"\output.wav", len(time))  # wav文件所在的文件夹，保存路径，时间序列长度
+        Code.Wavmerge.merge(wav_dir, wav_dir + r"\output1x.wav", len(time))  # wav文件所在的文件夹，保存路径，时间序列长度
 
         # 变速（播放速度范围：0.50~2.00，保留两位小数）
         # speed = input("请设置音频播放速度：")
-        speed = 1.5 # demo
+        speed = 1 # demo
         while speed < 0.5 or speed > 2:
             print("播放速度范围：0.50~2.00")
             speed = input("请设置音频播放速度：")
         if speed != 1:
             # 文件名标注倍速
-            res_2 = Code.SpeedRegulation.a_speed(wav_dir + r"\output.wav", speed, wav_dir + r"\output%sx.wav" % speed)
+            res_2 = Code.SpeedRegulation.a_speed(wav_dir + r"\output1x.wav", speed, wav_dir + r"\output%sx.wav" % speed)
             if not res_2:
-                res_3 = Code.SpeedRegulation.Prichange(wav_dir + r"\output.wav", speed, wav_dir + r"\output%sx.wav" % speed)
+                res_3 = Code.SpeedRegulation.Prichange(wav_dir + r"\output1x.wav", speed, wav_dir + r"\output%sx.wav" % speed)
                 if not res_3:
                     print("播放速度调节失败！")
+                    rmtree(wav_dir)
                     sys.exit()
             for i in range(len(time)):
                 time[i] = time[i] / speed
 
-        # 视频合成
+        # 视频合成，音量调整（volume的值代表是原音量的多少倍）
         final_path = r"C:\Users\www22\Desktop\立项\备注提取\output233.mp4"  # 最终视频保存的你路径
+        # volume = input("清设置视频音量（1为标准）：")  # volume代表音量放大（减小）几倍
+        volume = 1
+        while volume < 0.5 or volume > 10:
+            print("所选音量不合适！")
+            volume = input("音频音量范围：0.5~10")
 
-        try:
-            Code.VideoGeneration.video(ppt_path, wav_dir + r"\output%sx.wav" % speed, final_path, time)  # PPT文件所在路径， wav音频所在路径， mp4视频输出路径， 时间序列
-        except Exception:
-            print("视频合成失败！")
-            sys.exit()
+        Code.VideoGeneration.video(ppt_path, wav_dir + r"\output%sx.wav" % speed, final_path, time, volume)  # PPT文件所在路径，wav音频所在路径，mp4视频输出路径，时间序列，音量
 
         rmtree(wav_dir) # 删除临时文件夹
         # print(time)
