@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:master" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </select>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="cdd23cb2-a247-49ea-a734-c4225b4f69a5" name="Default Changelist" comment="删除生成的音频文件。" />
+    <list id="55d43995-aae6-46d0-a6cc-64a5b485f3bb" name="NoNeedCommit" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FlaskConsoleOptions" custom-start-script="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))">
+    <envs>
+      <env key="FLASK_APP" value="app" />
+    </envs>
+    <option name="myCustomStartScript" value="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))" />
+    <option name="myEnvs">
+      <map>
+        <entry key="FLASK_APP" value="app" />
+      </map>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="JupyterTrust" id="ba6e2db7-d3e7-4cec-b50d-6b2e2d45bf58" />
+  <component name="ProjectId" id="1eP0l4K8qvwJtjgjujp1rcV1qEZ" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <OptionsSetting value="false" id="Update" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="TERMINAL_CUSTOM_COMMANDS_GOT_IT" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Color Scheme Font" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\xu568\Desktop\Computer Science\Coding\Presentation\Designer\audio_src" />
+      <recent name="C:\Users\xu568\Desktop\Computer Science\Coding\Presentation\Designer" />
+      <recent name="$PROJECT_DIR$/Designer" />
+      <recent name="$PROJECT_DIR$/GUI" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.RunMainWindow">
+    <configuration name="NotesExtract" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Presentation" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/NotesExtract.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Presentation" type="PythonConfigurationType" factoryName="Python">
+      <module name="Presentation" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="$USER_HOME$/.conda/envs/Presentation/bin/python" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/temp.text" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="RunMainWindow" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Presentation" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Designer" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Designer/RunMainWindow.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="VideoGenerator" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Presentation" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/VideoGenerator.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Presentation" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="tts (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Presentation" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tts.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.RunMainWindow" />
+        <item itemvalue="Python.test" />
+        <item itemvalue="Python.VideoGenerator" />
+        <item itemvalue="Python.tts (1)" />
+        <item itemvalue="Python.NotesExtract" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="cdd23cb2-a247-49ea-a734-c4225b4f69a5" name="Default Changelist" comment="删除生成的音频文件。" />
+      <created>1594208067922</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1594208067922</updated>
+      <workItem from="1598021081225" duration="11317000" />
+      <workItem from="1598088776765" duration="187000" />
+    </task>
+    <task id="LOCAL-00001" summary="Init">
+      <created>1596695211108</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1596695211108</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Fix 3 errors.">
+      <created>1596696853104</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1596696853104</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Rearrange files.">
+      <created>1596697939004</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1596697939004</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Init" />
+    <MESSAGE value="Fix 3 errors." />
+    <MESSAGE value="Rearrange files." />
+    <option name="LAST_COMMIT_MESSAGE" value="Rearrange files." />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="217" y="192" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1596679624216">
+      <screen x="0" y="23" width="1280" height="720" />
+    </state>
+    <state x="217" y="192" key="#com.intellij.fileTypes.FileTypeChooser/0.23.1280.720@0.23.1280.720" timestamp="1596679624216" />
+    <state x="395" y="297" key="#com.jetbrains.python.refactoring.move.PyMakeFunctionTopLevelDialog" timestamp="1596682691628">
+      <screen x="0" y="23" width="1280" height="720" />
+    </state>
+    <state x="395" y="297" key="#com.jetbrains.python.refactoring.move.PyMakeFunctionTopLevelDialog/0.23.1280.720@0.23.1280.720" timestamp="1596682691628" />
+    <state x="156" y="124" width="1240" height="580" key="DiffContextDialog" timestamp="1598017720628">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="156" y="124" width="1240" height="580" key="DiffContextDialog/0.0.1536.864@0.0.1536.864" timestamp="1598017720628" />
+    <state x="504" y="111" key="FileChooserDialogImpl" timestamp="1598021182676">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="504" y="111" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1598021182676" />
+    <state width="1515" height="24" key="GridCell.Tab.0.bottom" timestamp="1603428294990">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="24" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1603428294990" />
+    <state width="1485" height="209" key="GridCell.Tab.0.bottom/0.0.1536.864@0.0.1536.864" timestamp="1598088915846" />
+    <state width="1259" height="191" key="GridCell.Tab.0.bottom/0.23.1280.720@0.23.1280.720" timestamp="1596696126779" />
+    <state width="1515" height="24" key="GridCell.Tab.0.center" timestamp="1603428294990">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="24" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1603428294990" />
+    <state width="1485" height="209" key="GridCell.Tab.0.center/0.0.1536.864@0.0.1536.864" timestamp="1598088915846" />
+    <state width="1259" height="191" key="GridCell.Tab.0.center/0.23.1280.720@0.23.1280.720" timestamp="1596696126778" />
+    <state width="1515" height="24" key="GridCell.Tab.0.left" timestamp="1603428294989">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="24" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1603428294989" />
+    <state width="1485" height="209" key="GridCell.Tab.0.left/0.0.1536.864@0.0.1536.864" timestamp="1598088915846" />
+    <state width="1259" height="191" key="GridCell.Tab.0.left/0.23.1280.720@0.23.1280.720" timestamp="1596696126777" />
+    <state width="1515" height="24" key="GridCell.Tab.0.right" timestamp="1603428294990">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="24" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1603428294990" />
+    <state width="1485" height="209" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1598088915846" />
+    <state width="1259" height="191" key="GridCell.Tab.0.right/0.23.1280.720@0.23.1280.720" timestamp="1596696126778" />
+    <state width="1515" height="24" key="GridCell.Tab.1.bottom" timestamp="1603428294991">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="24" key="GridCell.Tab.1.bottom/0.0.1536.824@0.0.1536.824" timestamp="1603428294991" />
+    <state width="1485" height="261" key="GridCell.Tab.1.bottom/0.0.1536.864@0.0.1536.864" timestamp="1598088764680" />
+    <state width="1259" height="222" key="GridCell.Tab.1.bottom/0.23.1280.720@0.23.1280.720" timestamp="1596696126771" />
+    <state width="1515" height="24" key="GridCell.Tab.1.center" timestamp="1603428294990">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="24" key="GridCell.Tab.1.center/0.0.1536.824@0.0.1536.824" timestamp="1603428294990" />
+    <state width="1485" height="261" key="GridCell.Tab.1.center/0.0.1536.864@0.0.1536.864" timestamp="1598088764680" />
+    <state width="1259" height="222" key="GridCell.Tab.1.center/0.23.1280.720@0.23.1280.720" timestamp="1596696126770" />
+    <state width="1515" height="24" key="GridCell.Tab.1.left" timestamp="1603428294990">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="24" key="GridCell.Tab.1.left/0.0.1536.824@0.0.1536.824" timestamp="1603428294990" />
+    <state width="1485" height="261" key="GridCell.Tab.1.left/0.0.1536.864@0.0.1536.864" timestamp="1598088764680" />
+    <state width="1259" height="222" key="GridCell.Tab.1.left/0.23.1280.720@0.23.1280.720" timestamp="1596696126769" />
+    <state width="1515" height="24" key="GridCell.Tab.1.right" timestamp="1603428294990">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="24" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1603428294990" />
+    <state width="1485" height="261" key="GridCell.Tab.1.right/0.0.1536.864@0.0.1536.864" timestamp="1598088764680" />
+    <state width="1259" height="222" key="GridCell.Tab.1.right/0.23.1280.720@0.23.1280.720" timestamp="1596696126770" />
+    <state x="158" y="0" width="982" height="720" key="SettingsEditor" timestamp="1598078682835">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="158" y="0" key="SettingsEditor/0.0.1536.864@0.0.1536.864" timestamp="1598078682835" />
+    <state x="149" y="23" width="982" height="720" key="SettingsEditor/0.23.1280.720@0.23.1280.720" timestamp="1596696348030" />
+    <state x="240" y="123" key="Vcs.Push.Dialog.v2" timestamp="1596696997724">
+      <screen x="0" y="23" width="1280" height="720" />
+    </state>
+    <state x="240" y="123" key="Vcs.Push.Dialog.v2/0.23.1280.720@0.23.1280.720" timestamp="1596696997724" />
+    <state x="100" y="123" width="1080" height="520" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog" timestamp="1596698023767">
+      <screen x="0" y="23" width="1280" height="720" />
+    </state>
+    <state x="100" y="123" width="1080" height="520" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog/0.23.1280.720@0.23.1280.720" timestamp="1596698023767" />
+    <state x="431" y="304" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1596696917251">
+      <screen x="0" y="23" width="1280" height="720" />
+    </state>
+    <state x="431" y="304" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.23.1280.720@0.23.1280.720" timestamp="1596696917251" />
+    <state x="341" y="109" width="598" height="548" key="find.popup" timestamp="1596584864215">
+      <screen x="0" y="23" width="1280" height="720" />
+    </state>
+    <state x="341" y="109" width="598" height="548" key="find.popup/0.23.1280.720@0.23.1280.720" timestamp="1596584864215" />
+    <state x="279" y="178" key="git4idea.merge.GitPullDialog" timestamp="1596696725809">
+      <screen x="0" y="23" width="1280" height="720" />
+    </state>
+    <state x="279" y="178" key="git4idea.merge.GitPullDialog/0.23.1280.720@0.23.1280.720" timestamp="1596696725808" />
+    <state x="356" y="50" width="804" height="774" key="search.everywhere.popup" timestamp="1603424604061">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="356" y="50" width="804" height="774" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1603424604061" />
+    <state x="297" y="67" width="670" height="676" key="search.everywhere.popup/0.23.1280.720@0.23.1280.720" timestamp="1596588469104" />
+    <state x="370" y="302" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1596584157442">
+      <screen x="0" y="23" width="1280" height="720" />
+    </state>
+    <state x="370" y="302" key="vcs.readOnlyHandler.ReadOnlyStatusDialog/0.23.1280.720@0.23.1280.720" timestamp="1596584157442" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

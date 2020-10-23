@@ -1,0 +1,503 @@
+// TODO: MainWindow Code
+
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QFileDialog
+
+
+class Ui_MainWindow(object):
+    _file_dir = ''  # pptx文件路径
+    _save_dir = ''  # 视频保存路径
+    update = True   # 检查pptx是否需要转换为图片
+    _translate = QtCore.QCoreApplication.translate
+    dict_male = {"磁性男声": "107289", "时尚男声": "100453",
+                 "浑厚男声": "106528", "成熟男声": "107813"}
+    dict_female = {"亲切女声": "101238", "时尚女声": "100438", "甜美女声": "108259-shaoyv",
+                   "温柔女声": "100216", "活泼女声": "biaobei", "可爱女童": "108259-luoli"}
+    dict = {
+        'male': {"磁性男声", "时尚男声", "浑厚男声", "成熟男声"},
+        'female': {"亲切女声", "时尚女声", "甜美女声", "温柔女声", "活泼女声", "可爱女童"}
+    }
+
+
+
+        self.ChooseFileButton.clicked.connect(self.openFile)
+        self.ChooseSavedDirButton.clicked.connect(self.saveFile)
+        self.PinyinCheck.clicked.connect(self.visible)
+
+    def getFileDir(self):
+        return self._file_dir
+
+    def getSaveDir(self):
+        return self._save_dir
+
+    def openFile(self):
+        openfile_name = QFileDialog.getOpenFileName(None, '选择文件', '', 'Pptx files(*.pptx)')
+        self.FileDirBlank.setText(openfile_name[0])
+
+    def saveFile(self):
+        self._save_dir = QtWidgets.QFileDialog.getExistingDirectory(None, "getExistingDirectory", "./")
+        self.SaveDirBlank.setText(self._save_dir)
+
+    def visible(self):
+        if self.PinyinCheck.isChecked():
+            self.NoNotesCheck.setChecked(False)
+            self.NoNotesCheck.setEnabled(False)
+        else:
+            self.NoNotesCheck.setEnabled(True)
+
+    # 音频转换函数
+    def convert(self):
+        if self._file_dir != '' and self._file_dir == self.FileDirBlank.text():
+            self.update = False
+        self._file_dir = self.FileDirBlank.text()
+        self._save_dir = self.SaveDirBlank.text()
+        if self._file_dir == '':
+            self.StatusLabel.setText(self._translate("MainWindow",
+                                                     "<html><head/><body><p><span style=\" "
+                                                     "font-size:14pt; color:#ff0000;\""
+                                                     ">文件目录为空!请检查后重试!"
+                                                     "</span></p></body></html>"))
+            return False
+        elif self._save_dir == '':
+            self.StatusLabel.setText(self._translate("MainWindow",
+                                                     "<html><head/><body><p><span style=\" "
+                                                     "font-size:14pt; color:#ff0000;\""
+                                                     ">保存路径为空!请检查后重试!"
+                                                     "</span></p></body></html>"))
+            return False
+        return True
+
+
+// TODO: EditWindow Code
+
+
+"""
+处理逻辑:
+    Activate Pinyin Check?---------------------Y-----------------> Case A
+                          --N--> Check No Notes Slides Only?--Y--> Case B ----> @Processing...
+                                                            --N--> Case C
+    @Processing:
+    Case A:                    ----> Correct pinyin                   ---->
+    Case B:---->Has Notes Pages----> Skip          ---->No Notes Pages---->Set Time
+    Case C:                    ----> Read only                        ---->
+"""
+
+# TODO: 待完善功能列表(部分显示在代码中，请在PyCharm左下方的TODO栏里查看):
+#  (Checked)只查看无备注的选项
+#  (Checked)0s确认窗口
+#  (Checked)图片的提取与音频的连接
+#  (Checked)PPTX与GUI的图片浏览控件对接
+#  (Checked)主播ID与性别在GUI中的设置
+#  有备注时的开头与末尾留白
+#  结束程序代码
+#  最后要删除audio.wav文件
+#  (Checked)防止试听音频被删代码
+#  不启用拼音检查后隐藏拼音框
+#  整体布局
+#  textBrowser控件中文字的字体字号设置
+#  音频倍速——暂时不考虑，中期后进行速度调节的开发
+
+from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtGui import QPixmap, QImage
+
+from PyQt5.QtWidgets import QApplication
+
+import AudioGenerator
+import VideoGenerator
+import NotesExtract
+import tts
+import requests
+import contextlib
+import wave
+import os
+
+
+class Ui_SetTimeWindow(object):
+    _file_dir = ''
+    _save_dir = ''
+    page = 1  # 当前幻灯片所在页数
+    notes = []  # 备注列表
+    _pinyin = []  # 存储备注的拼音
+    _time = []  # 存储每页幻灯片备注生成音频的秒数
+    _gender = '1'  # 默认男声
+    _gender_opt = '100453'  # 默认主播ID
+    _is_pinyin_check = False  # 是否启用了拼音检查
+    is_no_notes_only = False  # 是否只查看无备注
+    _no_notes_page = 0  # [只查看无备注页]模式的索引
+    _no_notes = []  # 记录无备注幻灯片的页数位置
+    _zero_second = []  # 记录0s备注幻灯片的页数
+    _translate = QtCore.QCoreApplication.translate
+
+    def setDir(self, file_dir, save_dir):
+        self._file_dir = file_dir
+        self._save_dir = save_dir
+
+    # (执行文件用)翻页函数
+    def turnPage(self, re=False):
+        # 点击了前一页且在无备注页将时间设置为0s
+        if self.notes[self.page - 1] == '\n' and self.DisplayTime.value() == 0:
+            return
+        if self.is_no_notes_only:
+            self.displayNoNotes(re)
+        else:
+            self.display(re)
+
+    # (process函数用)建立无备注幻灯片的页数索引
+    def _indexOfNoNotes(self):
+        for i in range(len(self.notes)):
+            if self.notes[i] == '\n':
+                self._no_notes.append(i + 1)
+
+    # (执行文件用)进入编辑窗口后执行的预备函数
+    def process(self, mainWindow):
+
+        # 获取主播ID、备注内容并初始化记录时间的time数组和幻灯片展示图片
+        if mainWindow.ChooseGender.currentText() == '男声':
+            self._gender = '1'
+            self._gender_opt = mainWindow.dict_male[mainWindow.ChooseSpeakerId.currentText()]
+        else:
+            self._gender = '0'
+            self._gender_opt = mainWindow.dict_female[mainWindow.ChooseSpeakerId.currentText()]
+
+        # TODO: 有能力的话编写一个可以提取ppt文件备注的函数
+        self.notes = NotesExtract.ObtainPptNote(self._file_dir)
+        self._time = [0.0] * len(self.notes)
+        self._is_pinyin_check = mainWindow.PinyinCheck.isChecked()
+        self.is_no_notes_only = mainWindow.NoNotesCheck.isChecked()
+
+        # 设置按键的可按性
+        if len(self.notes) == 1:
+            self.NextSlideButton.setEnabled(False)
+
+        if self.is_no_notes_only:
+            self._indexOfNoNotes()
+            self.displayNoNotes(False, False)
+        self.display(False, False)
+
+    # (_display和download函数用)将翻页前的拼音字段和时间设置保存(Case A C)
+    def save(self):
+        # Case1:当前页为最新页且备注非空
+        if self.page == len(self._pinyin) + 1 and self.notes[self.page - 1] != '\n':
+            self._pinyin.append(self.PinyinEdit.toPlainText())
+        # Case2:当前页为最新页但备注为空
+        elif self.page == len(self._pinyin) + 1:
+            self._pinyin.append('\n')
+            self._time[self.page - 1] = self.DisplayTime.value()
+        # Case3:该页备注已完成首次更新,保存修改
+        elif self.notes[self.page - 1] != '\n':
+            self._pinyin[self.page - 1] = self.PinyinEdit.toPlainText()
+        else:
+            self._time[self.page - 1] = self.DisplayTime.value()
+
+    # (_display函数用)对有备注的幻灯片进行处理
+    def _hasNotes(self):
+        QApplication.processEvents()
+        self.StatusLabel.setText(self._translate("MainWindow",
+                                                 "<html><head/><body><p><span style=\" "
+                                                 "font-size:12pt; color:#0000cd;\""
+                                                 ">请处理第" + str(self.page) + "页幻灯片!"
+                                                                            "</span></p></body></html>"))
+
+        # 获取并输出当前页的备注及拼音
+        # 清空当前文本框中的内容
+        self.TextBrowser.clear()
+        self.PinyinEdit.clear()
+
+        # 判断是否需要更新拼音数组
+        if self.page == len(self._pinyin) + 1:
+            text, pinyin = tts.tts(self.notes[self.page - 1], self._gender, self._gender_opt, True, True)
+            QApplication.processEvents()
+            self.TextBrowser.setText(text)
+            self.PinyinEdit.setText(pinyin)
+        else:
+            self.TextBrowser.setText(self.notes[self.page - 1])
+            self.PinyinEdit.setText(self._pinyin[self.page - 1])
+
+    # (_display函数用)对没有备注的幻灯片设置时长
+    def _set_time(self):
+        QApplication.processEvents()
+        self.DisplayTime.setValue(self._time[self.page - 1])
+        self.StatusLabel.setText(self._translate("MainWindow",
+                                                 "<html><head/><body><p><span style=\" "
+                                                 "font-size:12pt; color:#0000cd;\""
+                                                 ">请设置第" + str(self.page) + "页空白备注幻灯片在视频中的时长!"
+                                                                            "</span></p></body></html>"))
+        self.TextBrowser.setText(self._translate("MainWindow",
+                                                 "<html><head/><body><p><span style=\" "
+                                                 "font-size:10pt; color:#ff0000;\""
+                                                 ">请设置第" + str(self.page) + "页空白备注幻灯片在视频中的时长!"
+                                                                            "</span></p></body></html>"))
+        self.PinyinEdit.clear()
+
+    # (_display函数用)普通模式的翻页函数(Case A C)
+    def _turnPage(self, re=False):
+        # 判断当前页数并根据备注情况设置状态标签
+        # 用户点击了[上一张]
+        if re:
+            self.page = self.page - 1
+        # 用户点击了[下一张]
+        else:
+            self.page = self.page + 1
+
+    # (_display函数用)[只查看无备注页]模式的翻页函数(Case B)
+    def _turnNoNotesPage(self, re=False):
+        # 上一张
+        if re:
+            self._no_notes_page = self._no_notes_page - 1
+        # 下一张
+        else:
+            self._no_notes_page = self._no_notes_page + 1
+        self.page = self._no_notes[self._no_notes_page - 1]
+
+    # 展示幻灯片预览图片
+    def _display_pic(self):
+        img = QImage(os.path.join(os.getcwd(), 'pics', "幻灯片" + str(self.page) + '.jpg'))  # 创建图片实例
+        size = QSize(640, 360)
+        pixImg = QPixmap.fromImage(
+            img.scaled(size, Qt.IgnoreAspectRatio))  # 修改图片实例大小并从QImage实例中生成QPixmap实例以备放入QLabel控件中
+
+        self.label.resize(640, 360)
+        self.label.setPixmap(pixImg)
+
+    # 核心函数之一
+    # 为无备注的幻灯片设置展示时长(Case B)
+    def displayNoNotes(self, re=False, notFirst=True):
+        # 如果不是第一次执行该函数,则读取当前秒数并翻页
+        if notFirst:
+            self._time[self.page - 1] = self.DisplayTime.value()
+            self._turnNoNotesPage(re)
+        # 否则,找到第一页没有备注的幻灯片
+        else:
+            self.page = self._no_notes[self._no_notes_page]
+            self._no_notes_page = self._no_notes_page + 1
+
+        self._display_pic()
+        # 然后提示用户设置时长
+        self._set_time()
+
+        # 根据读取的页数位置设置[上一张]和[下一张]按钮
+        if self._no_notes_page == 1 and len(self._no_notes) != 1:
+            QApplication.processEvents()
+            self.PreSlideButton.setEnabled(False)
+            self.NextSlideButton.setEnabled(True)
+        elif self._no_notes_page == len(self._no_notes) and len(self._no_notes) != 1:
+            QApplication.processEvents()
+            self.PreSlideButton.setEnabled(True)
+            self.NextSlideButton.setEnabled(False)
+        elif 1 < self._no_notes_page < len(self._no_notes):
+            QApplication.processEvents()
+            self.PreSlideButton.setEnabled(True)
+            self.NextSlideButton.setEnabled(True)
+
+        # 全部无备注的幻灯片都处理完后将[修改完成]按键设置为可以点击
+        if self._no_notes_page == len(self._no_notes):
+            QApplication.processEvents()
+            self.CompleteButton.setEnabled(True)
+
+    # 核心函数之一
+    # 编辑有备注的幻灯片中的文字及拼音,并为无备注的幻灯片设置展示时长(Case A C)
+    def display(self, re=False, notFirst=True):
+        # 如果不是第一次执行该函数
+        # 则保存上一次用户的操作结果并翻页
+        if notFirst:
+            self.save()
+            self._turnPage(re)
+
+        self._display_pic()
+        # 当前页备注为空
+        if self.notes[self.page - 1] == '\n':
+            QApplication.processEvents()
+            self.DisplayTime.show()
+            self.DisplayTimeLabel.show()
+            self._set_time()
+        # 当前页备注非空
+        else:
+            QApplication.processEvents()
+            self.DisplayTime.hide()
+            self.DisplayTimeLabel.hide()
+            self._hasNotes()
+
+        # 根据读取的页数位置设置[上一张]和[下一张]按钮
+        if self.page == 1 and len(self.notes) != 1:
+            QApplication.processEvents()
+            self.PreSlideButton.setEnabled(False)
+            self.NextSlideButton.setEnabled(True)
+        elif self.page == len(self.notes) and len(self.notes) != 1:
+            QApplication.processEvents()
+            self.PreSlideButton.setEnabled(True)
+            self.NextSlideButton.setEnabled(False)
+        elif 1 < self.page < len(self.notes):
+            QApplication.processEvents()
+            self.PreSlideButton.setEnabled(True)
+            self.NextSlideButton.setEnabled(True)
+
+        # 全部页数的幻灯片都处理完后将[修改完成]按键设置为可以点击
+        if self.page == len(self.notes):
+            QApplication.processEvents()
+            self.CompleteButton.setEnabled(True)
+
+    # 获取音频时长
+    def _get_time(self, file_path):
+        with contextlib.closing(wave.open(file_path, 'r')) as f:
+            frames = f.getnframes()
+            rate = f.getframerate()
+            wav_length = frames / float(rate)
+        return wav_length  # 单位为秒
+
+    # 核心函数之一,通过接口下载音频
+    def download(self, finishWindow):
+        if self.is_no_notes_only:
+            self._time[self.page - 1] = self.DisplayTime.value()
+        else:
+            self.save()
+        for i in range(0, len(self.notes)):
+            self.StatusLabel.setText(self._translate("MainWindow",
+                                                     "<html><head/><body><p><span style=\" "
+                                                     "font-size:12pt; color:#0000cd;\""
+                                                     ">正在处理第" + str(i + 1) + "页幻灯片..."
+                                                                             "</span></p></body></html>"))
+            # 合成空白音频
+            if self.notes[i] == '\n':
+                AudioGenerator.BlankAudio(self._time[i], str(i + 1) + ".wav")
+                continue
+            # 判断合成模式
+            if self._is_pinyin_check:
+                chara = self._pinyin[i]
+            else:
+                chara = self.notes[i]
+            url = tts.tts(chara, self._gender, self._gender_opt, not self._is_pinyin_check)
+            QApplication.processEvents()
+            # 简易错误处理
+            # TODO: 优化错误处理代码--转换为异常处理
+            if url is None:
+                self.StatusLabel.setText(self._translate("MainWindow",
+                                                         "<html><head/><body><p><span style=\" "
+                                                         "font-size:12pt; color:#ff0000;\""
+                                                         ">转换出错!请重试!</span></p></body></html>"))
+                return
+
+            # 从网页下载音频
+            f = requests.get(url)
+            with open(str(i + 1) + ".wav", "wb") as code:
+                code.write(f.content)
+            self._time[i] = self._get_time(str(i + 1) + ".wav")
+
+        # 检查0s备注幻灯片
+        for i in range(0, len(self.notes)):
+            if self._time[i] == 0:
+                self._zero_second.append(i)
+
+        # 将单独音频文件合并
+        AudioGenerator.MergeAudio("", os.path.abspath(os.path.join(os.getcwd(), "..", "audio.wav")),
+                                  len(self.notes), self._zero_second)
+        # 删除单独音频文件,保留合并后的文件
+        AudioGenerator.DeleteAudio()
+        self.StatusLabel.setText(self._translate("MainWindow",
+                                                 "<html><head/><body><p><span style=\""
+                                                 " font-size:12pt; color:#21ff06;\""
+                                                 ">音频转换完成!</span></p></body></html>"))
+
+        QApplication.processEvents()
+        self.StatusLabel.setText(self._translate("MainWindow",
+                                                 "<html><head/><body><p><span style=\" "
+                                                 "font-size:12pt; color:#0000cd;\""
+                                                 ">正在进行视频转换..."
+                                                 "</span></p></body></html>"))
+        VideoGenerator.video(self._file_dir,
+                             os.path.join(os.path.abspath(os.path.join(os.getcwd(), "..")), "audio.wav"),
+                             os.path.join(self._save_dir, "video.mp4"), self._time)
+        QApplication.processEvents()
+        self.StatusLabel.setText(self._translate("MainWindow",
+                                                 "<html><head/><body><p><span style=\""
+                                                 " font-size:12pt; color:#21ff06;\""
+                                                 ">视频转换完成!</span></p></body></html>"))
+        finishWindow.exec_()
+
+
+
+# TODO:tts.py源文件
+"""
+################
+# TTS 系统说明  #
+################
+
+url:		'http://111.230.90.48:9006/tts'
+method: 	POST
+data:		包含内容见下面示例
+response:	'http://111.230.90.48:9006/' + src_0 即为合成的音频地址，可下载
+"""
+
+import json
+import requests
+
+url = 'http://111.230.90.48:9006/tts'  # 可以先在浏览器打开，听听不同主播的效果
+
+# 一般情况下，只需设定 token text gender speaker_id
+parameter = {
+    'token': 'asdfgh',  # 可以自己设定任意字符串
+    'mode': '#synth_text',  # 从文本合成的模式   #synth_pinyin 是拼音合成模式
+    'text': '这里输入要合成的文本',
+    'pinyin': '',  # 拼音合成时输入
+    'gender': '0',  # 女声为0，男声为1,与主播性别相匹配
+    'speaker_id': '100438',  # 主播id, 一定要与gender匹配
+    'type': 'wav',  # 暂不支持mp3
+}
+# 如果文本较长，timeout要设定大一点
+response = requests.post(url, data=json.dumps(parameter), timeout=500)
+
+if response.status_code == 200:
+    data = response.json()
+    text = data['text']  # 文本
+    pinyin = data['pinyin']  # 文本转换的拼音
+    info = data['info']
+    src_0 = data['src_0']
+    wav_url = 'http://111.230.90.48:9006/' + src_0  # 合成的音频文件地址
+    print(text)
+    print(pinyin)
+    print(info)
+    print(wav_url)
+
+'''
+# 多音字问题 临时解决方案：
+# 1. response 有反馈 text 和 pinyin， 可以给用户提供拼音修改功能
+# 2. 将修改后的拼音 放入parameter 中的 'pinyin', 并将 'mode' 改成 '#synth_pinyin'
+# 例如：  parameter['pinyin']='di4 yi1 hang2 .' parameter[mode]='#synth_pinyin'
+# 3. 拼音模式重新合成
+
+# 女主播 id：
+100438
+biaobei
+dll
+ljspeech
+tx_f
+wjh_zhufu
+100117
+100203
+100216
+101238
+105706
+111782
+108259-luoli
+108259-shaonv
+
+# 男主播 id
+100453
+blz
+gudian
+wxb
+lx_b
+lx_y
+100027
+100174
+100242
+100851
+102468
+105706
+106528
+107289
+107813
+110474
+
+'''
+
